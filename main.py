@@ -4,8 +4,8 @@ from agent import Agent
 from config import Config
 
 async def main():
-    first_name = "Jesse"
-    last_name = "Buitenhuis"
+    first_name = Config.FIRST_NAME
+    last_name = Config.LAST_NAME
     user_name = Config.USER_NAME
     thread_id = f"{user_name}_{uuid.uuid4().hex}"
     system_message = "You are a helpful AI assistant"

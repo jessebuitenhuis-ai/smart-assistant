@@ -9,3 +9,5 @@ class Config:
     DEFAULT_TEMPERATURE = 0
     DEFAULT_HISTORY_LIMIT = 6
     USER_NAME="jesse_buitenhuis"
+    FIRST_NAME="Jesse"
+    LAST_NAME="Buitenhuis"

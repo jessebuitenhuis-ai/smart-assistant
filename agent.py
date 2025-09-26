@@ -13,7 +13,7 @@ class Agent:
     async def init(self):
         await self.__thread.init()
 
-    async def invoke(self, user_input: str):
+    async def invoke(self, user_input: str) -> str:
         await self.__thread.add_user_message(user_input)
         system_message = await self.__create_system_message()
         history = await self.__thread.get_history()
