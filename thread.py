@@ -1,16 +1,15 @@
-from zep_cloud.client import AsyncZep
 from zep_cloud import Message
 from config import Config
 from knowledge_graph import KnowledgeGraph
 
 class Thread:
-    __graph = KnowledgeGraph()
-
-    def __init__(self, thread_id: str, user_name: str, first_name: str, last_name: str):
+    def __init__(self, thread_id: str, user_name: str, first_name: str, last_name: str, email: str):
         self.__thread_id = thread_id
         self.__user_name = user_name
         self.__first_name = first_name
         self.__last_name = last_name
+        self.__email = email
+        self.__graph = KnowledgeGraph(user_id=user_name)
 
     async def init(self):
         await self.__ensure_thread()
@@ -62,7 +61,8 @@ class Thread:
             await self.__graph.zep.user.add(
                 user_id=self.__user_name,
                 first_name=self.__first_name,
-                last_name=self.__last_name
+                last_name=self.__last_name,
+                email=self.__email
             )
         except Exception:
             pass

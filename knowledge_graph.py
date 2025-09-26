@@ -4,9 +4,12 @@ from zep_cloud import AsyncZep
 class KnowledgeGraph:
     zep = AsyncZep(api_key=Config.ZEP_API_KEY)
 
+    def __init__(self, user_id: str):
+        self.__user_id = user_id
+
     async def search_facts(self, query: str, limit: int = 5) -> list[str]:
         result = await self.zep.graph.search(
-            user_id=Config.USER_NAME,
+            user_id=self.__user_id,
             query=query,
             limit=limit,
             scope="edges",
@@ -19,7 +22,7 @@ class KnowledgeGraph:
 
     async def search_nodes(self, query: str, limit: int = 5) -> list[str]:
         result = await self.zep.graph.search(
-            user_id=Config.USER_NAME,
+            user_id=self.__user_id,
             query=query,
             limit=limit,
             scope="nodes",

@@ -5,10 +5,10 @@ from config import Config
 
 
 class Agent:
-    def __init__(self, user_name: str, thread_id: str, system_message: str, first_name: str, last_name: str):
+    def __init__(self, user_name: str, thread_id: str, system_message: str, first_name: str, last_name: str, email: str):
         self.__llm = ChatOpenAI(model=Config.OPENAI_MODEL, temperature=Config.DEFAULT_TEMPERATURE)
         self.__system_message = system_message
-        self.__thread = Thread(thread_id, user_name, first_name, last_name)
+        self.__thread = Thread(thread_id, user_name, first_name, last_name, email)
 
     async def init(self):
         await self.__thread.init()

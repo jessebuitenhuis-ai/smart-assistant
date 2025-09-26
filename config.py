@@ -8,6 +8,4 @@ class Config:
     OPENAI_MODEL = "gpt-4o-mini"
     DEFAULT_TEMPERATURE = 0
     DEFAULT_HISTORY_LIMIT = 6
-    USER_NAME="jesse_buitenhuis"
-    FIRST_NAME="Jesse"
-    LAST_NAME="Buitenhuis"
+    USER_NAME="105962804522697288533"

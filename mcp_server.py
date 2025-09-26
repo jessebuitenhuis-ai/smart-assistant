@@ -1,8 +1,9 @@
 from fastmcp import FastMCP
 from knowledge_graph import KnowledgeGraph
+from config import Config
 
 server = FastMCP("smart-assistant")
-graph = KnowledgeGraph()
+graph = KnowledgeGraph(user_id=Config.USER_NAME)
 
 @server.tool
 async def search_facts(query: str, limit: int = 5) -> list[str]:
