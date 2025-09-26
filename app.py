@@ -1,6 +1,7 @@
 import chainlit as cl
 from agent import Agent
 from config import Config
+from typing import Dict, Optional
 
 system_message = "You are a helpful AI assistant"
 
@@ -24,3 +25,11 @@ async def main(message: cl.Message):
     result = await agent.invoke(message.content)
     await cl.Message(content=result.content).send()
 
+@cl.oauth_callback
+def oauth_callback(
+    provider_id: str,
+    token: str,
+    raw_user_data: Dict[str, str],
+    default_user: cl.User,
+) -> Optional[cl.User]:
+    return default_user
