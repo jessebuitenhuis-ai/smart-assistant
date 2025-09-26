@@ -5,6 +5,7 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
+    "dotenv>=0.9.9",
     "langchain-openai>=0.3.33",
     "langgraph>=0.6.7",
     "zep-cloud>=3.4.3",
