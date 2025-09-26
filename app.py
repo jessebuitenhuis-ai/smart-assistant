@@ -22,8 +22,13 @@ async def start():
 @cl.on_message
 async def main(message: cl.Message):
     agent: Agent = cl.user_session.get("agent")
-    result = await agent.invoke(message.content)
-    await cl.Message(content=result.content).send()
+    stream = agent.stream(message.content)
+
+    message = cl.Message(content="")
+    async for chunk in stream:
+        await message.stream_token(chunk)
+
+    await message.update()
 
 @cl.oauth_callback
 def oauth_callback(
