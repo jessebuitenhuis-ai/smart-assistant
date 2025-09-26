@@ -1,9 +1,8 @@
 from fastmcp import FastMCP
-from zep_cloud import AsyncZep
-from config import Config
+from knowledge_graph import KnowledgeGraph
 
 server = FastMCP("smart-assistant")
-zep = AsyncZep(api_key=Config.ZEP_API_KEY)
+graph = KnowledgeGraph()
 
 @server.tool
 async def search_facts(query: str, limit: int = 5) -> list[str]:
@@ -15,18 +14,7 @@ async def search_facts(query: str, limit: int = 5) -> list[str]:
         
     Returns:
         list: A list of facts that match the query."""
-    
-    result = await zep.graph.search(
-        user_id=Config.USER_NAME,
-        query=query,
-        limit=limit,
-        scope="edges",
-    )
-
-    facts = [edge.fact for edge in result.edges or[]]
-    if not facts:
-        return ["No facts found for the query."]
-    return facts
+    return await graph.search_facts(query, limit)
 
 @server.tool
 async def search_nodes(query: str, limit: int = 5) -> list[str]:
@@ -38,18 +26,7 @@ async def search_nodes(query: str, limit: int = 5) -> list[str]:
         
     Returns:
         list: A list of nodes that match the query."""
-    
-    result = await zep.graph.search(
-        user_id=Config.USER_NAME,
-        query=query,
-        limit=limit,
-        scope="nodes",
-    )
-
-    summaries = [node.summary for node in result.nodes or[]]
-    if not summaries:
-        return ["No nodes found for the query."]
-    return summaries
+    return await graph.search_nodes(query, limit)
 
 if __name__ == "__main__":
     server.run(transport="sse", port=4567)
