@@ -1,4 +1,13 @@
+'use client'
+
+import { useSearchParams } from 'next/navigation'
+
 export default function AuthCodeError() {
+  const searchParams = useSearchParams()
+  const error = searchParams.get('error')
+  const errorDescription = searchParams.get('error_description')
+  const code = searchParams.get('code')
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
       <div className="max-w-md w-full space-y-8">
@@ -9,6 +18,15 @@ export default function AuthCodeError() {
           <p className="mt-2 text-center text-sm text-gray-600">
             Sorry, there was an error during authentication. Please try again.
           </p>
+
+          {/* Debug information */}
+          <div className="mt-4 p-4 bg-gray-100 rounded text-xs">
+            <p><strong>Error:</strong> {error || 'Not specified'}</p>
+            <p><strong>Description:</strong> {errorDescription || 'Not specified'}</p>
+            <p><strong>Code present:</strong> {code ? 'Yes' : 'No'}</p>
+            <p><strong>Current URL:</strong> {typeof window !== 'undefined' ? window.location.href : 'N/A'}</p>
+          </div>
+
           <div className="mt-6">
             <a
               href="/auth/login"
