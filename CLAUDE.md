@@ -1,2 +1,3 @@
 - Supabase docs can be found here: https://supabase.com/docs/llms.txt
 - Maintain separation of concerns between UI, service and data components
+- Write self-documenting code. Prefer clear naming over excessive commenting

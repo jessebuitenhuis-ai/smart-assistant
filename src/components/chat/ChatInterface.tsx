@@ -1,11 +1,12 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import { User } from '@supabase/supabase-js'
 import Sidebar from './Sidebar'
 import ChatArea from './ChatArea'
 import { useThreads } from '@/hooks/useThreads'
 import { useMessages } from '@/hooks/useMessages'
+import { useServices } from '@/hooks/useServices'
 import { Database } from '@/types/supabase'
 
 type Thread = Database['public']['Tables']['threads']['Row']
@@ -16,6 +17,7 @@ interface ChatInterfaceProps {
 
 export default function ChatInterface({ user }: ChatInterfaceProps) {
   const [currentThread, setCurrentThread] = useState<Thread | null>(null)
+  const [pendingMessage, setPendingMessage] = useState<string | null>(null)
 
   const {
     threads,
@@ -48,10 +50,9 @@ export default function ChatInterface({ user }: ChatInterfaceProps) {
     clearMessagesError()
   }
 
-  const sendMessage = async (content: string) => {
+  const sendMessage = useCallback(async (content: string) => {
     let threadToUse = currentThread
 
-    // Create a new thread if none exists
     if (!threadToUse) {
       threadToUse = await createThread()
       if (!threadToUse) {
@@ -59,16 +60,10 @@ export default function ChatInterface({ user }: ChatInterfaceProps) {
         return
       }
       setCurrentThread(threadToUse)
-    }
-
-    // Add user message
-    const userMessage = await addMessage(content, 'user')
-    if (!userMessage) {
-      console.error('Failed to send message')
+      setPendingMessage(content)
       return
     }
 
-    // Update thread title if it's the first message
     if (!threadToUse.title) {
       const title = content.slice(0, 50) + (content.length > 50 ? '...' : '')
       const updatedThread = await updateThread(threadToUse.id, { title })
@@ -77,12 +72,23 @@ export default function ChatInterface({ user }: ChatInterfaceProps) {
       }
     }
 
-    // TODO: Add AI response logic here
-    // For now, we'll just add a placeholder response
+    const userMessage = await addMessage(content, 'user')
+    if (!userMessage) {
+      console.error('Failed to send message')
+      return
+    }
+
     setTimeout(async () => {
       await addMessage("I'm a placeholder response. AI integration coming soon!", 'assistant')
     }, 1000)
-  }
+  }, [currentThread, createThread, updateThread, addMessage])
+
+  useEffect(() => {
+    if (currentThread && pendingMessage) {
+      sendMessage(pendingMessage)
+      setPendingMessage(null)
+    }
+  }, [currentThread, pendingMessage, sendMessage])
 
   if (threadsLoading) {
     return (
