@@ -1,0 +1,1 @@
+- Supabase docs can be found here: https://supabase.com/docs/llms.txt
