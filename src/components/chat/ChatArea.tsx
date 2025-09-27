@@ -10,12 +10,18 @@ interface ChatAreaProps {
   currentThread: Thread | null
   messages: Message[]
   onSendMessage: (content: string) => void
+  loading?: boolean
+  error?: string | null
+  onClearError?: () => void
 }
 
 export default function ChatArea({
   currentThread,
   messages,
-  onSendMessage
+  onSendMessage,
+  loading = false,
+  error = null,
+  onClearError
 }: ChatAreaProps) {
   const [input, setInput] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -120,6 +126,31 @@ export default function ChatArea({
       {/* Messages area */}
       <div className="flex-1 overflow-y-auto p-6">
         <div className="max-w-4xl mx-auto space-y-6">
+          {error && (
+            <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+              <div className="flex justify-between items-center">
+                <p className="text-red-800">{error}</p>
+                {onClearError && (
+                  <button
+                    onClick={onClearError}
+                    className="text-red-600 hover:text-red-800 ml-4"
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                )}
+              </div>
+            </div>
+          )}
+
+          {loading && messages.length === 0 && (
+            <div className="flex items-center justify-center py-8">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+              <span className="ml-3 text-gray-600">Loading messages...</span>
+            </div>
+          )}
+
           {messages.map((message) => (
             <div
               key={message.id}

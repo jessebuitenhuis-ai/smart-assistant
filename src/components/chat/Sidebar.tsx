@@ -1,8 +1,8 @@
 'use client'
 
 import { User } from '@supabase/supabase-js'
-import { createSupabaseClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
+import { useAuth } from '@/hooks/useAuth'
 import { Database } from '@/types/supabase'
 
 type Thread = Database['public']['Tables']['threads']['Row']
@@ -23,11 +23,13 @@ export default function Sidebar({
   user
 }: SidebarProps) {
   const router = useRouter()
-  const supabase = createSupabaseClient()
+  const { signOut } = useAuth()
 
   const handleSignOut = async () => {
-    await supabase.auth.signOut()
-    router.push('/auth/login')
+    const success = await signOut()
+    if (success) {
+      router.push('/auth/login')
+    }
   }
 
   const formatDate = (dateString: string) => {
