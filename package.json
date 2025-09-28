@@ -10,7 +10,16 @@
     "prisma:push": "prisma db push",
     "prisma:studio": "prisma studio",
     "prisma:reset": "prisma db push --force-reset",
-    "prisma:setup": "./apps/backend/prisma-setup.sh"
+    "prisma:setup": "./apps/backend/prisma-setup.sh",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down",
+    "docker:restart": "docker-compose restart",
+    "docker:logs": "docker-compose logs -f",
+    "docker:clean": "docker-compose down -v --remove-orphans",
+    "docker:db": "docker-compose up -d postgres",
+    "docker:pgadmin": "docker-compose --profile admin up -d pgadmin",
+    "docker:setup": "docker-compose up -d && npm run prisma:setup",
+    "setup:docker": "./docker-setup.sh"
   },
   "private": true,
   "devDependencies": {
