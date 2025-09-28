@@ -8,3 +8,4 @@ Read the documentation when you need more info:
 - Write self-documenting code. Prefer clear naming over excessive commenting
 - Create small, atomic UI components for re-usable, dumb presentational components
 - A file should contain one type (class, interface etc.). Create separate files for separate types.
+- Prefix private methods and properties with "_"
