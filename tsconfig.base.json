@@ -15,6 +15,7 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@smart-assistant/prisma": ["libs/shared/prisma/src/index.ts"],
       "@smart-assistant/shared/data-access": [
         "libs/shared/data-access/src/index.ts"
       ],

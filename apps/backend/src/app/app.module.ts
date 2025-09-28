@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { PrismaModule } from './prisma/prisma.module';
+import { PrismaModule } from '@smart-assistant/prisma';
 import { UserController } from './users/user.controller';
 import { UserService } from './users/user.service';
 import { ThreadController } from './threads/thread.controller';

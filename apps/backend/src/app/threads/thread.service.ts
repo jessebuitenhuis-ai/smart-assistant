@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Thread } from '@prisma/client';
-import { PrismaService } from '../prisma/prisma.service';
+import { PrismaService } from '@smart-assistant/prisma';
 import { CreateThreadDto } from './CreateThreadDto';
 import { UpdateThreadDto } from './UpdateThreadDto';
 
