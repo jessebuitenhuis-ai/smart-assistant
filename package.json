@@ -5,7 +5,12 @@
   "scripts": {
     "start": "nx serve",
     "build": "nx build",
-    "test": "nx test"
+    "test": "nx test",
+    "prisma:generate": "prisma generate",
+    "prisma:push": "prisma db push",
+    "prisma:studio": "prisma studio",
+    "prisma:reset": "prisma db push --force-reset",
+    "prisma:setup": "./backend/prisma-setup.sh"
   },
   "private": true,
   "devDependencies": {
@@ -65,9 +70,12 @@
     "@angular/platform-browser-dynamic": "~20.2.0",
     "@angular/router": "~20.2.0",
     "@nestjs/common": "^11.0.0",
+    "@nestjs/config": "^4.0.2",
     "@nestjs/core": "^11.0.0",
     "@nestjs/platform-express": "^11.0.0",
+    "@prisma/client": "^6.16.2",
     "axios": "^1.6.0",
+    "prisma": "^6.16.2",
     "reflect-metadata": "^0.1.13",
     "rxjs": "~7.8.0",
     "zone.js": "~0.15.0"

@@ -6,3 +6,5 @@ node_modules
 .nx
 .vscode
 .env*
+dist
+/generated/prisma
