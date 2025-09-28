@@ -63,11 +63,21 @@ export class MessageService {
         throw new MessageServiceError('No data returned after creating message', 'CREATE_MESSAGE_NO_DATA')
       }
 
+      console.log('MessageService: Emitting MESSAGE_CREATED event:', {
+        messageId: data.id,
+        threadId,
+        userId,
+        role: data.role,
+        content: data.content.substring(0, 100) + '...'
+      })
+
       await this._eventService.emit('MESSAGE_CREATED', {
         message: data,
         threadId,
         userId
       })
+
+      console.log('MessageService: MESSAGE_CREATED event emitted successfully')
 
       return data
     } catch (error) {
