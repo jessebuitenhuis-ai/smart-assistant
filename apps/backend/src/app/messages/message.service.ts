@@ -1,27 +1,54 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { Message } from '@prisma/client';
+import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import { Message, MessageRole } from '@prisma/client';
 import { PrismaService } from '@smart-assistant/prisma';
 import { CreateMessageDto } from './CreateMessageDto';
 import { UpdateMessageDto } from './UpdateMessageDto';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
 @Injectable()
 export class MessageService {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(createMessageDto: CreateMessageDto): Promise<Message> {
-    // Validate that thread exists
-    await this.prisma.thread.findUniqueOrThrow({
-      where: { id: createMessageDto.threadId },
-    }).catch(() => {
-      throw new NotFoundException(`Thread with ID ${createMessageDto.threadId} not found`);
-    });
+    // Validate required fields
+    if (!createMessageDto.content || !createMessageDto.threadId || !createMessageDto.role) {
+      throw new BadRequestException('Content, threadId, and role are required');
+    }
 
-    return this.prisma.message.create({
-      data: createMessageDto,
-      include: {
-        thread: true,
-      },
-    });
+    if (createMessageDto.content.trim().length === 0) {
+      throw new BadRequestException('Content cannot be empty');
+    }
+
+    // Validate role
+    const validRoles = Object.values(MessageRole);
+    if (!validRoles.includes(createMessageDto.role)) {
+      throw new BadRequestException('Invalid role. Must be USER, ASSISTANT, or SYSTEM');
+    }
+
+    // Validate that thread exists
+    try {
+      await this.prisma.thread.findUniqueOrThrow({
+        where: { id: createMessageDto.threadId },
+      });
+    } catch (error) {
+      throw new BadRequestException(`Thread with ID ${createMessageDto.threadId} not found`);
+    }
+
+    try {
+      return await this.prisma.message.create({
+        data: createMessageDto,
+        include: {
+          thread: true,
+        },
+      });
+    } catch (error) {
+      if (error instanceof PrismaClientKnownRequestError) {
+        if (error.code === 'P2003') {
+          throw new BadRequestException(`Thread with ID ${createMessageDto.threadId} not found`);
+        }
+      }
+      throw new BadRequestException('Failed to create message');
+    }
   }
 
   async findAll(): Promise<Message[]> {
@@ -36,13 +63,7 @@ export class MessageService {
   }
 
   async findAllByThreadId(threadId: string): Promise<Message[]> {
-    // Validate that thread exists
-    await this.prisma.thread.findUniqueOrThrow({
-      where: { id: threadId },
-    }).catch(() => {
-      throw new NotFoundException(`Thread with ID ${threadId} not found`);
-    });
-
+    // Don't validate thread existence for filtering - just return empty array if thread doesn't exist
     return this.prisma.message.findMany({
       where: { threadId },
       include: {
@@ -70,6 +91,19 @@ export class MessageService {
   }
 
   async update(id: string, updateMessageDto: UpdateMessageDto): Promise<Message> {
+    // Validate content if being updated
+    if (updateMessageDto.content !== undefined && updateMessageDto.content.trim().length === 0) {
+      throw new BadRequestException('Content cannot be empty');
+    }
+
+    // Validate role if being updated
+    if (updateMessageDto.role !== undefined) {
+      const validRoles = Object.values(MessageRole);
+      if (!validRoles.includes(updateMessageDto.role)) {
+        throw new BadRequestException('Invalid role. Must be USER, ASSISTANT, or SYSTEM');
+      }
+    }
+
     try {
       return await this.prisma.message.update({
         where: { id },
@@ -79,6 +113,11 @@ export class MessageService {
         },
       });
     } catch (error) {
+      if (error instanceof PrismaClientKnownRequestError) {
+        if (error.code === 'P2025') {
+          throw new NotFoundException(`Message with ID ${id} not found`);
+        }
+      }
       throw new NotFoundException(`Message with ID ${id} not found`);
     }
   }
@@ -89,6 +128,11 @@ export class MessageService {
         where: { id },
       });
     } catch (error) {
+      if (error instanceof PrismaClientKnownRequestError) {
+        if (error.code === 'P2025') {
+          throw new NotFoundException(`Message with ID ${id} not found`);
+        }
+      }
       throw new NotFoundException(`Message with ID ${id} not found`);
     }
   }

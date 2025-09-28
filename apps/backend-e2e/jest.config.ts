@@ -5,6 +5,10 @@ export default {
   globalTeardown: '<rootDir>/src/support/global-teardown.ts',
   setupFiles: ['<rootDir>/src/support/test-setup.ts'],
   testEnvironment: 'node',
+  testMatch: [
+    '<rootDir>/src/**/*.(spec|test).ts',
+    '<rootDir>/src/**/*.e2e-spec.ts'
+  ],
   transform: {
     '^.+\\.[tj]s$': [
       'ts-jest',
