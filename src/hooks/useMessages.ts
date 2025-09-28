@@ -11,7 +11,7 @@ interface UseMessagesState {
   error: string | null
 }
 
-export function useMessages(threadId?: string) {
+export function useMessages(threadId?: string, userId?: string) {
   const { messageService } = useServices()
   const [state, setState] = useState<UseMessagesState>({
     messages: [],
@@ -47,7 +47,7 @@ export function useMessages(threadId?: string) {
     if (!threadId) return null
 
     try {
-      const newMessage = await messageService.createMessage(threadId, content, role, metadata)
+      const newMessage = await messageService.createMessage(threadId, content, role, userId, metadata)
       setState(prev => ({
         ...prev,
         messages: [...prev.messages, newMessage]
@@ -61,7 +61,7 @@ export function useMessages(threadId?: string) {
       setState(prev => ({ ...prev, error: errorMessage }))
       return null
     }
-  }, [messageService, threadId])
+  }, [messageService, threadId, userId])
 
   const updateMessage = useCallback(async (
     messageId: string,

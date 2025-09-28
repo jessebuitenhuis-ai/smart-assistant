@@ -2,25 +2,26 @@ import { ChatOpenAI } from '@langchain/openai'
 import { HumanMessage, AIMessage, SystemMessage } from '@langchain/core/messages'
 import { Database } from '@/types/supabase'
 import { AIServiceError } from './errors/ai-service.error'
+import { EventService } from './event.service'
 
 type Message = Database['public']['Tables']['messages']['Row']
 
 export class AIService {
-  private chatModel: ChatOpenAI
+  private _chatModel: ChatOpenAI
 
-  constructor(apiKey?: string) {
+  constructor(apiKey: string, private _eventService: EventService) {
     if (!apiKey) {
       throw new AIServiceError('OpenAI API key is required', 'MISSING_API_KEY')
     }
 
-    this.chatModel = new ChatOpenAI({
+    this._chatModel = new ChatOpenAI({
       openAIApiKey: apiKey,
       modelName: 'gpt-3.5-turbo',
       temperature: 0.7,
     })
   }
 
-  private formatMessagesForLangChain(messages: Message[], systemPrompt: string = '') {
+  private _formatMessagesForLangChain(messages: Message[], systemPrompt: string = '') {
     const langChainMessages = []
 
     if (systemPrompt) {
@@ -38,14 +39,40 @@ export class AIService {
     return langChainMessages
   }
 
+  private async _getContext(threadId: string, messages: Message[], userId?: string): Promise<string> {
+    if (!userId) {
+      return ''
+    }
+
+    return new Promise((resolve) => {
+      const timeout = setTimeout(() => resolve(''), 2000)
+
+      const handleContextRetrieved = (payload: { context: string; threadId: string }) => {
+        if (payload.threadId === threadId) {
+          clearTimeout(timeout)
+          this._eventService.off('CONTEXT_RETRIEVED', handleContextRetrieved)
+          resolve(payload.context)
+        }
+      }
+
+      this._eventService.on('CONTEXT_RETRIEVED', handleContextRetrieved)
+      this._eventService.emit('AI_CONTEXT_REQUESTED', { threadId, userId, messages })
+    })
+  }
+
   async generateResponse(
     messages: Message[],
+    threadId: string,
+    userId?: string,
     systemPrompt: string = 'You are a helpful AI assistant. Provide clear, concise, and helpful responses.'
   ): Promise<string> {
     try {
-      const formattedMessages = this.formatMessagesForLangChain(messages, systemPrompt)
+      const context = await this._getContext(threadId, messages, userId)
+      const enhancedSystemPrompt = context ? `${systemPrompt}\n\n${context}` : systemPrompt
 
-      const response = await this.chatModel.invoke(formattedMessages)
+      const formattedMessages = this._formatMessagesForLangChain(messages, enhancedSystemPrompt)
+
+      const response = await this._chatModel.invoke(formattedMessages)
 
       if (!response.content) {
         throw new AIServiceError('Empty response from AI model', 'EMPTY_RESPONSE')
@@ -67,13 +94,18 @@ export class AIService {
 
   async generateResponseStream(
     messages: Message[],
+    threadId: string,
+    userId?: string,
     systemPrompt: string = 'You are a helpful AI assistant. Provide clear, concise, and helpful responses.',
     onToken?: (token: string) => void
   ): Promise<string> {
     try {
-      const formattedMessages = this.formatMessagesForLangChain(messages, systemPrompt)
+      const context = await this._getContext(threadId, messages, userId)
+      const enhancedSystemPrompt = context ? `${systemPrompt}\n\n${context}` : systemPrompt
 
-      const response = await this.chatModel.stream(formattedMessages)
+      const formattedMessages = this._formatMessagesForLangChain(messages, enhancedSystemPrompt)
+
+      const response = await this._chatModel.stream(formattedMessages)
       let fullResponse = ''
 
       for await (const chunk of response) {

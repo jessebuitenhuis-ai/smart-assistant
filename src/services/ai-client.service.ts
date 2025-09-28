@@ -6,6 +6,8 @@ type Message = Database['public']['Tables']['messages']['Row']
 export class AIClientService {
   async generateResponse(
     messages: Message[],
+    threadId: string,
+    userId?: string,
     systemPrompt: string = 'You are a helpful AI assistant. Provide clear, concise, and helpful responses.'
   ): Promise<string> {
     try {
@@ -16,6 +18,8 @@ export class AIClientService {
         },
         body: JSON.stringify({
           messages,
+          threadId,
+          userId,
           systemPrompt,
         }),
       })

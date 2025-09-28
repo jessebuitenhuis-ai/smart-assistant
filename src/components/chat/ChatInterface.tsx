@@ -35,7 +35,7 @@ export default function ChatInterface({ user }: ChatInterfaceProps) {
     addMessage,
     clearMessages,
     clearError: clearMessagesError
-  } = useMessages(currentThread?.id)
+  } = useMessages(currentThread?.id, user.id)
 
   const { aiService } = useServices()
 
@@ -82,13 +82,13 @@ export default function ChatInterface({ user }: ChatInterfaceProps) {
 
     try {
       const updatedMessages = [...messages, userMessage]
-      const aiResponse = await aiService.generateResponse(updatedMessages)
+      const aiResponse = await aiService.generateResponse(updatedMessages, threadToUse.id, user.id)
       await addMessage(aiResponse, 'assistant')
     } catch (error) {
       console.error('AI generation error:', error)
       await addMessage('Sorry, I encountered an error while generating a response. Please try again.', 'assistant')
     }
-  }, [currentThread, createThread, updateThread, addMessage, messages, aiService])
+  }, [currentThread, createThread, updateThread, addMessage, messages, aiService, user.id])
 
   useEffect(() => {
     if (currentThread && pendingMessage) {

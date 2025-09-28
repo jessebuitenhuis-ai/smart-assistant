@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { AIService } from '@/services/ai.service'
+import { ServiceRegistry } from '@/services/service-registry'
 import { Database } from '@/types/supabase'
 
 type Message = Database['public']['Tables']['messages']['Row']
 
 export async function POST(request: NextRequest) {
   try {
-    const { messages, systemPrompt } = await request.json()
+    const { messages, threadId, userId, systemPrompt } = await request.json()
 
     if (!Array.isArray(messages)) {
       return NextResponse.json(
@@ -15,17 +15,20 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const apiKey = process.env.OPENAI_API_KEY
-    if (!apiKey) {
+    if (!threadId) {
       return NextResponse.json(
-        { error: 'OpenAI API key not configured' },
-        { status: 500 }
+        { error: 'Thread ID is required' },
+        { status: 400 }
       )
     }
 
-    const aiService = new AIService(apiKey)
+    const serviceRegistry = ServiceRegistry.getInstance()
+    const aiService = serviceRegistry.getAIService()
+
     const response = await aiService.generateResponse(
       messages as Message[],
+      threadId,
+      userId,
       systemPrompt
     )
 

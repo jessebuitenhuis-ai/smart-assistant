@@ -2,6 +2,7 @@
 Read the documentation when you need more info:
 - Supabase: https://supabase.com/docs/llms.txt
 - NextJS: https://nextjs.org/docs/llms.txt
+- Zep: https://help.getzep.com/llms.txt
 
 # Code style
 - Maintain separation of concerns between UI, service and data components

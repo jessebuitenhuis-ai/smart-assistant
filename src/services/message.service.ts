@@ -1,17 +1,21 @@
 import { SupabaseClient } from '@supabase/supabase-js'
 import { Database, Json } from '@/types/supabase'
 import { MessageServiceError } from './errors/message-service.error'
+import { EventService } from './event.service'
 
 type Message = Database['public']['Tables']['messages']['Row']
 type MessageInsert = Database['public']['Tables']['messages']['Insert']
 type MessageUpdate = Database['public']['Tables']['messages']['Update']
 
 export class MessageService {
-  constructor(private supabase: SupabaseClient<Database>) {}
+  constructor(
+    private _supabase: SupabaseClient<Database>,
+    private _eventService: EventService
+  ) {}
 
   async getMessagesByThreadId(threadId: string): Promise<Message[]> {
     try {
-      const { data, error } = await this.supabase
+      const { data, error } = await this._supabase
         .from('messages')
         .select('*')
         .eq('thread_id', threadId)
@@ -34,6 +38,7 @@ export class MessageService {
     threadId: string,
     content: string,
     role: 'user' | 'assistant',
+    userId?: string,
     metadata?: Json
   ): Promise<Message> {
     try {
@@ -44,7 +49,7 @@ export class MessageService {
         metadata: metadata || null,
       }
 
-      const { data, error } = await this.supabase
+      const { data, error } = await this._supabase
         .from('messages')
         .insert(messageData)
         .select()
@@ -58,6 +63,12 @@ export class MessageService {
         throw new MessageServiceError('No data returned after creating message', 'CREATE_MESSAGE_NO_DATA')
       }
 
+      await this._eventService.emit('MESSAGE_CREATED', {
+        message: data,
+        threadId,
+        userId
+      })
+
       return data
     } catch (error) {
       if (error instanceof MessageServiceError) {
@@ -69,7 +80,7 @@ export class MessageService {
 
   async updateMessage(messageId: string, updates: Omit<MessageUpdate, 'id'>): Promise<Message> {
     try {
-      const { data, error } = await this.supabase
+      const { data, error } = await this._supabase
         .from('messages')
         .update(updates)
         .eq('id', messageId)
@@ -95,7 +106,7 @@ export class MessageService {
 
   async deleteMessage(messageId: string): Promise<void> {
     try {
-      const { error } = await this.supabase
+      const { error } = await this._supabase
         .from('messages')
         .delete()
         .eq('id', messageId)
@@ -113,7 +124,7 @@ export class MessageService {
 
   async deleteMessagesByThreadId(threadId: string): Promise<void> {
     try {
-      const { error } = await this.supabase
+      const { error } = await this._supabase
         .from('messages')
         .delete()
         .eq('thread_id', threadId)
@@ -131,7 +142,7 @@ export class MessageService {
 
   async getMessageById(messageId: string): Promise<Message | null> {
     try {
-      const { data, error } = await this.supabase
+      const { data, error } = await this._supabase
         .from('messages')
         .select('*')
         .eq('id', messageId)
