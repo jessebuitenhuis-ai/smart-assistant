@@ -5,11 +5,11 @@ echo "Setting up Prisma database..."
 
 # Generate Prisma Client
 echo "Generating Prisma Client..."
-npx prisma generate --schema=../../libs/shared/prisma/prisma/schema.prisma
+npx prisma generate --schema=libs/shared/prisma/prisma/schema.prisma
 
 # Push the schema to the database (for development)
 echo "Pushing schema to database..."
-npx prisma db push --schema=../../libs/shared/prisma/prisma/schema.prisma
+npx prisma db push --schema=libs/shared/prisma/prisma/schema.prisma
 
 echo "Prisma setup complete!"
 echo ""
