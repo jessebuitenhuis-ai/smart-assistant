@@ -1,3 +1,8 @@
 
 .nx/installation
 .nx/cache
+.angular
+node_modules
+.nx
+.vscode
+.env*
