@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useServices } from './useServices'
-import { ThreadServiceError } from '@/services/thread.service'
+import { ThreadServiceError } from '@/services/errors/thread-service.error'
 import { Database } from '@/types/supabase'
 
 type Thread = Database['public']['Tables']['threads']['Row']

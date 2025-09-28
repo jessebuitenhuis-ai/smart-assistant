@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { User } from '@supabase/supabase-js'
 import { useServices } from './useServices'
-import { AuthServiceError } from '@/services/auth.service'
+import { AuthServiceError } from '@/services/errors/auth-service.error'
 import { Database } from '@/types/supabase'
 
 type Profile = Database['public']['Tables']['profiles']['Row']

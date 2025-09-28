@@ -1,13 +1,7 @@
 import { Database } from '@/types/supabase'
+import { AIClientServiceError } from './errors/ai-client-service.error'
 
 type Message = Database['public']['Tables']['messages']['Row']
-
-export class AIClientServiceError extends Error {
-  constructor(message: string, public readonly code: string) {
-    super(message)
-    this.name = 'AIClientServiceError'
-  }
-}
 
 export class AIClientService {
   async generateResponse(

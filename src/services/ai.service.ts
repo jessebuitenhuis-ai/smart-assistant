@@ -1,15 +1,9 @@
 import { ChatOpenAI } from '@langchain/openai'
 import { HumanMessage, AIMessage, SystemMessage } from '@langchain/core/messages'
 import { Database } from '@/types/supabase'
+import { AIServiceError } from './errors/ai-service.error'
 
 type Message = Database['public']['Tables']['messages']['Row']
-
-export class AIServiceError extends Error {
-  constructor(message: string, public readonly code: string) {
-    super(message)
-    this.name = 'AIServiceError'
-  }
-}
 
 export class AIService {
   private chatModel: ChatOpenAI

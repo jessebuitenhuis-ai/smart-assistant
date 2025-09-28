@@ -1,16 +1,10 @@
 import { SupabaseClient, User } from '@supabase/supabase-js'
 import { Database } from '@/types/supabase'
+import { AuthServiceError } from './errors/auth-service.error'
 
 type Profile = Database['public']['Tables']['profiles']['Row']
 type ProfileInsert = Database['public']['Tables']['profiles']['Insert']
 type ProfileUpdate = Database['public']['Tables']['profiles']['Update']
-
-export class AuthServiceError extends Error {
-  constructor(message: string, public readonly code: string) {
-    super(message)
-    this.name = 'AuthServiceError'
-  }
-}
 
 export class AuthService {
   constructor(private supabase: SupabaseClient<Database>) {}

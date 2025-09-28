@@ -1,16 +1,10 @@
 import { SupabaseClient } from '@supabase/supabase-js'
 import { Database } from '@/types/supabase'
+import { ThreadServiceError } from './errors/thread-service.error'
 
 type Thread = Database['public']['Tables']['threads']['Row']
 type ThreadInsert = Database['public']['Tables']['threads']['Insert']
 type ThreadUpdate = Database['public']['Tables']['threads']['Update']
-
-export class ThreadServiceError extends Error {
-  constructor(message: string, public readonly code: string) {
-    super(message)
-    this.name = 'ThreadServiceError'
-  }
-}
 
 export class ThreadService {
   constructor(private supabase: SupabaseClient<Database>) {}

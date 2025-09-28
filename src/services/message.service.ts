@@ -1,16 +1,10 @@
 import { SupabaseClient } from '@supabase/supabase-js'
 import { Database, Json } from '@/types/supabase'
+import { MessageServiceError } from './errors/message-service.error'
 
 type Message = Database['public']['Tables']['messages']['Row']
 type MessageInsert = Database['public']['Tables']['messages']['Insert']
 type MessageUpdate = Database['public']['Tables']['messages']['Update']
-
-export class MessageServiceError extends Error {
-  constructor(message: string, public readonly code: string) {
-    super(message)
-    this.name = 'MessageServiceError'
-  }
-}
 
 export class MessageService {
   constructor(private supabase: SupabaseClient<Database>) {}

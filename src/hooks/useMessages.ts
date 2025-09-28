@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useServices } from './useServices'
-import { MessageServiceError } from '@/services/message.service'
+import { MessageServiceError } from '@/services/errors/message-service.error'
 import { Database, Json } from '@/types/supabase'
 
 type Message = Database['public']['Tables']['messages']['Row']
