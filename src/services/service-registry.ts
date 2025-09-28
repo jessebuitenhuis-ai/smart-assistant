@@ -13,11 +13,8 @@ export class ServiceRegistry {
   private _aiService: AIService | null = null
 
   private constructor() {
-    console.log('ServiceRegistry: Creating new instance')
     this._eventService = new EventService()
-    console.log('ServiceRegistry: EventService created')
     this._initializeZepService()
-    console.log('ServiceRegistry: Constructor completed')
   }
 
   static getInstance(): ServiceRegistry {
@@ -31,11 +28,7 @@ export class ServiceRegistry {
     try {
       const zepApiKey = process.env.ZEP_API_KEY
       if (zepApiKey) {
-        console.log('Initializing ZepService with API key')
         this._zepService = new ZepService(zepApiKey, this._eventService)
-        console.log('ZepService initialized successfully')
-      } else {
-        console.log('No ZEP_API_KEY found, ZepService will not be initialized')
       }
     } catch (error) {
       console.error('Failed to initialize ZepService:', error)
