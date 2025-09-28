@@ -1,2 +1,8 @@
-<app-nx-welcome></app-nx-welcome>
-<router-outlet></router-outlet>
+<div class="app-container">
+  <app-thread-sidebar
+    (threadSelect)="onThreadSelect($event)"
+    (newThread)="onNewThread()"
+  ></app-thread-sidebar>
+  
+  <app-chat-view></app-chat-view>
+</div>
