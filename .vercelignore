@@ -1,0 +1,3 @@
+# Override .gitignore for Vercel deployment
+# We need dist/backend for the serverless function
+!dist/backend
