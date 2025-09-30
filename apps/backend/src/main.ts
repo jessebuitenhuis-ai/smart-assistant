@@ -8,31 +8,19 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app/app.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { ExpressAdapter } from '@nestjs/platform-express';
-import express, { Express } from 'express';
+import express from 'express';
+import type { Request, Response } from 'express';
 
-let cachedServer: Express;
-
-async function createApp(): Promise<INestApplication> {
-  const expressApp = express();
-  const app = await NestFactory.create(
-    AppModule,
-    new ExpressAdapter(expressApp)
-  );
-  const globalPrefix = 'api';
-  app.setGlobalPrefix(globalPrefix);
-  await setupSwagger(app, globalPrefix);
-  await app.init();
-  return app;
-}
+let app: INestApplication | null = null;
 
 async function bootstrap() {
-  const app = await createApp();
-  await listen(app, 'api');
-}
+  const nestApp = await NestFactory.create(AppModule);
+  const globalPrefix = 'api';
+  nestApp.setGlobalPrefix(globalPrefix);
+  await setupSwagger(nestApp, globalPrefix);
 
-async function listen(app: INestApplication<unknown>, globalPrefix: string) {
   const port = process.env.PORT || 3000;
-  await app.listen(port);
+  await nestApp.listen(port);
   Logger.log(
     `🚀 Application is running on: http://localhost:${port}/${globalPrefix}`
   );
@@ -50,20 +38,24 @@ async function setupSwagger(app: INestApplication<unknown>, globalPrefix: string
 }
 
 // Vercel serverless handler
-export default async (req: any, res: any) => {
-  if (!cachedServer) {
+async function handler(req: Request, res: Response) {
+  if (!app) {
     const expressApp = express();
     const adapter = new ExpressAdapter(expressApp);
-    const app = await NestFactory.create(AppModule, adapter);
+    app = await NestFactory.create(AppModule, adapter);
     app.setGlobalPrefix('api');
     app.enableCors();
     await app.init();
-    cachedServer = expressApp;
   }
-  return cachedServer(req, res);
-};
+
+  const expressApp = app.getHttpAdapter().getInstance();
+  return expressApp(req, res);
+}
 
 // Only run bootstrap in non-serverless environment
 if (require.main === module) {
   bootstrap();
 }
+
+// Export for Vercel
+export default handler;

@@ -2,20 +2,15 @@
   "version": 2,
   "builds": [
     {
-      "src": "dist/backend/main.js",
-      "use": "@vercel/node",
-      "config": {
-        "includeFiles": ["dist/backend/**"]
-      }
+      "src": "apps/backend/src/main.ts",
+      "use": "@vercel/node"
     }
   ],
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "dist/backend/main.js"
+      "dest": "apps/backend/src/main.ts",
+      "methods": ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS", "HEAD"]
     }
-  ],
-  "env": {
-    "NODE_ENV": "production"
-  }
+  ]
 }
