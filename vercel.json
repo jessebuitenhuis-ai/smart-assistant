@@ -1,16 +1,15 @@
 {
-  "version": 2,
-  "builds": [
-    {
-      "src": "apps/backend/src/main.ts",
-      "use": "@vercel/node"
+  "buildCommand": "npm run build:backend",
+  "outputDirectory": "dist/backend",
+  "functions": {
+    "dist/backend/main.js": {
+      "runtime": "nodejs20.x"
     }
-  ],
-  "routes": [
+  },
+  "rewrites": [
     {
-      "src": "/(.*)",
-      "dest": "apps/backend/src/main.ts",
-      "methods": ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS", "HEAD"]
+      "source": "/(.*)",
+      "destination": "/dist/backend/main.js"
     }
   ]
 }
