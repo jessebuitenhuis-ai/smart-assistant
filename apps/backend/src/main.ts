@@ -53,13 +53,10 @@ async function setupSwagger(app: INestApplication<unknown>, globalPrefix: string
 export default async (req: any, res: any) => {
   if (!cachedServer) {
     const expressApp = express();
-    const app = await NestFactory.create(
-      AppModule,
-      new ExpressAdapter(expressApp)
-    );
+    const adapter = new ExpressAdapter(expressApp);
+    const app = await NestFactory.create(AppModule, adapter);
     app.setGlobalPrefix('api');
     app.enableCors();
-    await setupSwagger(app, 'api');
     await app.init();
     cachedServer = expressApp;
   }
