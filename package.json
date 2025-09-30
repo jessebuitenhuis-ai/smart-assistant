@@ -5,7 +5,7 @@
   "scripts": {
     "start": "nx serve",
     "build": "nx build",
-    "build:backend": "npm run prisma:push && nx build backend",
+    "build:backend": "npm run prisma:push && npx nx build backend",
     "build:vercel": "nx build backend",
     "test": "nx test",
     "postinstall": "npm run prisma:generate",
