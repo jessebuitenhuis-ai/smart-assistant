@@ -7,13 +7,27 @@ import { INestApplication, Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app/app.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { ExpressAdapter } from '@nestjs/platform-express';
+import express, { Express } from 'express';
 
-async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+let cachedServer: Express;
+
+async function createApp(): Promise<INestApplication> {
+  const expressApp = express();
+  const app = await NestFactory.create(
+    AppModule,
+    new ExpressAdapter(expressApp)
+  );
   const globalPrefix = 'api';
   app.setGlobalPrefix(globalPrefix);
   await setupSwagger(app, globalPrefix);
-  await listen(app, globalPrefix);
+  await app.init();
+  return app;
+}
+
+async function bootstrap() {
+  const app = await createApp();
+  await listen(app, 'api');
 }
 
 async function listen(app: INestApplication<unknown>, globalPrefix: string) {
@@ -35,4 +49,24 @@ async function setupSwagger(app: INestApplication<unknown>, globalPrefix: string
   SwaggerModule.setup(globalPrefix, app, documentFactory);
 }
 
-bootstrap();
+// Vercel serverless handler
+export default async (req: any, res: any) => {
+  if (!cachedServer) {
+    const expressApp = express();
+    const app = await NestFactory.create(
+      AppModule,
+      new ExpressAdapter(expressApp)
+    );
+    app.setGlobalPrefix('api');
+    app.enableCors();
+    await setupSwagger(app, 'api');
+    await app.init();
+    cachedServer = expressApp;
+  }
+  return cachedServer(req, res);
+};
+
+// Only run bootstrap in non-serverless environment
+if (require.main === module) {
+  bootstrap();
+}
