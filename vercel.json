@@ -1,15 +1,16 @@
 {
+  "version": 2,
   "buildCommand": "npm run build:backend",
-  "outputDirectory": "dist/backend",
-  "functions": {
-    "dist/backend/main.js": {
-      "runtime": "nodejs20.x"
-    }
-  },
-  "rewrites": [
+  "builds": [
     {
-      "source": "/(.*)",
-      "destination": "/dist/backend/main.js"
+      "src": "dist/backend/main.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "dist/backend/main.js"
     }
   ]
 }
