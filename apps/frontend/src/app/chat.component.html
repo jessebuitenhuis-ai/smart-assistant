@@ -1,0 +1,32 @@
+<div class="chat-container">
+  <div class="chat-header">
+    <h1>Chat Interface</h1>
+  </div>
+
+  <div class="chat-messages">
+    <div
+      *ngFor="let message of messages"
+      class="message"
+      [class.user-message]="message.sender === 'user'"
+      [class.bot-message]="message.sender === 'bot'"
+    >
+      <div class="message-content">
+        <div class="message-text">{{ message.text }}</div>
+        <div class="message-time">
+          {{ message.timestamp | date : 'short' }}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="chat-input">
+    <input
+      type="text"
+      [(ngModel)]="newMessage"
+      (keypress)="onKeyPress($event)"
+      placeholder="Type a message..."
+      class="input-field"
+    />
+    <button (click)="sendMessage()" class="send-button">Send</button>
+  </div>
+</div>
