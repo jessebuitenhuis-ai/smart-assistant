@@ -6,7 +6,7 @@
     "start": "nx serve",
     "build": "npm run build:frontend && npm run build:backend",
     "build:frontend": "nx build frontend",
-    "build:backend": "npm run prisma:generate && npx nx build backend",
+    "build:backend": "npm run prisma:generate && nx build backend",
     "build:vercel": "nx build backend",
     "test": "nx test",
     "prisma:generate": "prisma generate --schema=libs/shared/prisma/prisma/schema.prisma",
