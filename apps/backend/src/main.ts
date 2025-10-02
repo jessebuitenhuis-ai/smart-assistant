@@ -3,20 +3,20 @@
  * This is only a minimal backend to get started.
  */
 
-import { INestApplication, Logger } from '@nestjs/common';
+import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app/app.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import { ExpressAdapter } from '@nestjs/platform-express';
-import express from 'express';
-import type { Request, Response } from 'express';
-
-let app: INestApplication | null = null;
 
 async function bootstrap() {
   const nestApp = await NestFactory.create(AppModule);
   const globalPrefix = 'api';
   nestApp.setGlobalPrefix(globalPrefix);
+  nestApp.enableCors({
+    origin: '*',
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    credentials: true,
+  });
   await setupSwagger(nestApp, globalPrefix);
 
   const port = process.env.PORT || 3000;
@@ -26,7 +26,7 @@ async function bootstrap() {
   );
 }
 
-async function setupSwagger(app: INestApplication<unknown>, globalPrefix: string) {
+async function setupSwagger(app, globalPrefix: string) {
   const config = new DocumentBuilder()
     .setTitle('Smart Assistant API')
     .setDescription('API for the Smart Assistant project')
@@ -37,25 +37,4 @@ async function setupSwagger(app: INestApplication<unknown>, globalPrefix: string
   SwaggerModule.setup(globalPrefix, app, documentFactory);
 }
 
-// Vercel serverless handler
-async function handler(req: Request, res: Response) {
-  if (!app) {
-    const expressApp = express();
-    const adapter = new ExpressAdapter(expressApp);
-    app = await NestFactory.create(AppModule, adapter);
-    app.setGlobalPrefix('api');
-    app.enableCors();
-    await app.init();
-  }
-
-  const expressApp = app.getHttpAdapter().getInstance();
-  return expressApp(req, res);
-}
-
-// Only run bootstrap in non-serverless environment
-if (require.main === module) {
-  bootstrap();
-}
-
-// Export for Vercel
-export default handler;
+bootstrap();
