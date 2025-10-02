@@ -4,14 +4,14 @@ on: push
 
 jobs:
   build:
-    name: Build (${{ matrix.cmd.name }})
+    name: Build - ${{ matrix.cmd.name }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
         cmd:
-          - name: Build Frontend
+          - name: Frontend
             run: npm run build:frontend
-          - name: Build Backend
+          - name: Backend
             run: npm run build:backend
 
     steps:
@@ -27,5 +27,5 @@ jobs:
       - name: Install dependencies
         run: npm ci
         
-      - name: ${{ matrix.cmd.name }}
+      - name: Run build
         run: ${{ matrix.cmd.run }}
