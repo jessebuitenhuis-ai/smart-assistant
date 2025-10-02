@@ -9,11 +9,9 @@ jobs:
     strategy:
       matrix:
         cmd:
-          frontend:
-            name: Build Frontend
+          - name: Build Frontend
             run: npm run build:frontend
-          backend:
-            name: Build Backend
+          - name: Build Backend
             run: npm run build:backend
 
     steps:
