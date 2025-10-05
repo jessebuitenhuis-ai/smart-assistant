@@ -1,18 +1,27 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import { Field, FieldGroup, FieldSeparator } from "@/components/ui/field";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { EmailField } from "./forms/EmailField";
 import { PasswordField } from "./forms/PasswordField";
-import { AppleIcon } from "./icons/apple-icon";
 import { GoogleIcon } from "./icons/google-icon";
 import { H1 } from "./typography/h1";
 import { Paragraph } from "./typography/paragraph";
+import { LoginFormState } from "@/actions/auth/login-state";
+import { useActionState } from "react";
 
-export function LoginForm({
-  className,
-  ...props
-}: React.ComponentProps<"div">) {
+type LoginFormProps = {
+  action: (
+    state: LoginFormState,
+    formData: FormData
+  ) => Promise<LoginFormState>;
+} & React.ComponentProps<"div">;
+
+export function LoginForm({ className, action, ...props }: LoginFormProps) {
+  const [state, dispatch, pending] = useActionState(action, undefined);
+
   return (
     <div
       className={cn("flex flex-col gap-6 text-center", className)}
@@ -24,7 +33,7 @@ export function LoginForm({
           Don&apos;t have an account? <Link href="/register">Sign up</Link>
         </Paragraph>
       </div>
-      <form>
+      <form action={dispatch}>
         <FieldGroup>
           <FieldGroup className="gap-2">
             <EmailField required />
@@ -34,16 +43,10 @@ export function LoginForm({
             <Button type="submit">Login</Button>
           </Field>
           <FieldSeparator>Or</FieldSeparator>
-          <Field className="grid gap-4 sm:grid-cols-2">
-            <Button variant="outline" type="button">
-              <AppleIcon />
-              Continue with Apple
-            </Button>
-            <Button variant="outline" type="button">
-              <GoogleIcon />
-              Continue with Google
-            </Button>
-          </Field>
+          <Button variant="outline" type="button">
+            <GoogleIcon />
+            Continue with Google
+          </Button>
         </FieldGroup>
       </form>
     </div>

@@ -15,6 +15,7 @@ export function TextField({
   type = "text",
   placeholder,
   required,
+  name,
 }: TextFieldProps) {
   return (
     <Field>
@@ -24,6 +25,7 @@ export function TextField({
         type={type}
         placeholder={placeholder}
         required={required}
+        name={name}
       />
     </Field>
   );

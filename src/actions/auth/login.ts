@@ -8,6 +8,7 @@ export async function login(
   state: LoginFormState,
   formData: FormData
 ): Promise<LoginFormState> {
+  console.log(formData);
   const validated = LoginFormSchema.safeParse({
     email: formData.get("email"),
     password: formData.get("password"),

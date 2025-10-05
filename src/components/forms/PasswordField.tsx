@@ -12,6 +12,7 @@ export function PasswordField({
       id={id}
       label={label}
       placeholder={placeholder}
+      name={id}
       {...props}
     />
   );

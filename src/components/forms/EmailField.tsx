@@ -11,6 +11,7 @@ export function EmailField({
       type="email"
       id={id}
       label={label}
+      name={id}
       placeholder={placeholder}
       {...props}
     />
