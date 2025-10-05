@@ -1,17 +1,16 @@
 "use client";
 
+import { LoginFormState } from "@/actions/auth/login-state";
 import { Button } from "@/components/ui/button";
-import { Field, FieldGroup, FieldSeparator } from "@/components/ui/field";
+import { FieldGroup, FieldSeparator } from "@/components/ui/field";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
-import { EmailField } from "./forms/EmailField";
-import { PasswordField } from "./forms/PasswordField";
-import { GoogleIcon } from "./icons/google-icon";
-import { H1 } from "./typography/h1";
-import { Paragraph } from "./typography/paragraph";
-import { LoginFormState } from "@/actions/auth/login-state";
 import { useActionState } from "react";
-import { Spinner } from "./ui/spinner";
+import { EmailField } from "../forms/EmailField";
+import { PasswordField } from "../forms/PasswordField";
+import { GoogleIcon } from "../icons/google-icon";
+import { H1 } from "../typography/h1";
+import { Paragraph } from "../typography/paragraph";
 
 type LoginFormProps = {
   action: (
