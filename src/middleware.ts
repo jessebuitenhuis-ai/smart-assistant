@@ -39,15 +39,27 @@ export async function middleware(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const publicPaths = ["/login", "/auth", "/error", "/register"];
-  const isPublicPath = publicPaths.some((path) =>
+  const authPaths = ["/login", "/auth", "/register"];
+  const isAuthPath = authPaths.some((path) =>
     request.nextUrl.pathname.startsWith(path)
   );
+
+  const publicPaths = ["/error"];
+  const isPublicPath =
+    isAuthPath ||
+    publicPaths.some((path) => request.nextUrl.pathname.startsWith(path));
 
   if (!user && !isPublicPath) {
     // no user, potentially respond by redirecting the user to the login page
     const url = request.nextUrl.clone();
     url.pathname = "/login";
+    return NextResponse.redirect(url);
+  }
+
+  if (user && isAuthPath) {
+    // user is authenticated, potentially respond by redirecting the user to the home page
+    const url = request.nextUrl.clone();
+    url.pathname = "/";
     return NextResponse.redirect(url);
   }
 

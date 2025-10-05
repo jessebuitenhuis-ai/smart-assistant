@@ -2,13 +2,12 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { LoginFormSchema, LoginFormState } from "./login-state";
+import { redirect } from "next/navigation";
 
 export async function login(
   state: LoginFormState,
   formData: FormData
 ): Promise<LoginFormState> {
-  const supabase = await createClient();
-
   const validated = LoginFormSchema.safeParse({
     email: formData.get("email"),
     password: formData.get("password"),
@@ -20,6 +19,14 @@ export async function login(
     };
   }
 
-  // Login logic here
-  console.log("Login function called");
+  const supabase = await createClient();
+  const { error } = await supabase.auth.signInWithPassword(validated.data);
+
+  if (error) {
+    return {
+      message: error.message,
+    };
+  }
+
+  redirect("/");
 }
