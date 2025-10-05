@@ -11,6 +11,7 @@ import { H1 } from "./typography/h1";
 import { Paragraph } from "./typography/paragraph";
 import { LoginFormState } from "@/actions/auth/login-state";
 import { useActionState } from "react";
+import { Spinner } from "./ui/spinner";
 
 type LoginFormProps = {
   action: (
@@ -39,9 +40,9 @@ export function LoginForm({ className, action, ...props }: LoginFormProps) {
             <EmailField required />
             <PasswordField required />
           </FieldGroup>
-          <Field>
-            <Button type="submit">Login</Button>
-          </Field>
+          <Button type="submit" pending={pending} pendingEl="Logging in...">
+            Login
+          </Button>
           <FieldSeparator>Or</FieldSeparator>
           <Button variant="outline" type="button">
             <GoogleIcon />
