@@ -15,9 +15,10 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import { getUser } from "@/lib/supabase/getUser";
 import { Bot, ChevronUp, House, MessageCircleIcon, User2 } from "lucide-react";
 import Link from "next/link";
-import { FC, ReactNode } from "react";
+import { FC } from "react";
 
 interface MenuItem {
   title: string;
@@ -38,8 +39,11 @@ const items: MenuItem[] = [
   },
 ];
 
-export default function AppSidebar() {
-  const username = "Username";
+export default async function AppSidebar() {
+  const user = await getUser();
+  const username =
+    user?.user_metadata.name || user?.user_metadata.email || "User";
+
   return (
     <Sidebar>
       <SidebarHeader className="flex-row px-4">
