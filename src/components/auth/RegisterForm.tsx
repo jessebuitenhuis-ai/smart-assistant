@@ -10,6 +10,7 @@ import { EmailField } from "../forms/EmailField";
 import { PasswordField } from "../forms/PasswordField";
 import { H1 } from "../typography/h1";
 import { Paragraph } from "../typography/paragraph";
+import { TextField } from "../forms/TextField";
 
 type RegisterFormProps = {
   action: (
@@ -39,6 +40,13 @@ export function RegisterForm({
       <form action={dispatch}>
         <FieldGroup>
           <FieldGroup className="gap-2">
+            <TextField
+              id="name"
+              placeholder="John Doe"
+              name="name"
+              label="Name"
+              required
+            />
             <EmailField required />
             <PasswordField required />
           </FieldGroup>

@@ -8,6 +8,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
+import UserAvatar from "../auth/UserAvatar";
 
 export async function AppSidebarUserDropdown() {
   const user = await getUser();
@@ -18,7 +19,8 @@ export async function AppSidebarUserDropdown() {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <SidebarMenuButton>
-          <User2 /> {username}
+          <UserAvatar className="size-5" />
+          <span>{username}</span>
           <ChevronUp className="ml-auto" />
         </SidebarMenuButton>
       </DropdownMenuTrigger>

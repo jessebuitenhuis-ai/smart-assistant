@@ -9,6 +9,7 @@ export async function register(
   formData: FormData
 ): Promise<RegisterFormState> {
   const validated = RegisterFormSchema.safeParse({
+    name: formData.get("name"),
     email: formData.get("email"),
     password: formData.get("password"),
   });
@@ -20,7 +21,16 @@ export async function register(
   }
 
   const supabase = await createClient();
-  const { error } = await supabase.auth.signUp(validated.data);
+  const { error } = await supabase.auth.signUp({
+    email: validated.data.email,
+    password: validated.data.password,
+    options: {
+      data: {
+        display_name: validated.data.name,
+        name: validated.data.name,
+      },
+    },
+  });
 
   if (error) {
     return {

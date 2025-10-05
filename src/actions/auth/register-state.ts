@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 export const RegisterFormSchema = z.object({
+  name: z.string().min(1, "Name is required").trim(),
   email: z.email("Invalid email address").trim(),
   password: z
     .string()
@@ -11,6 +12,7 @@ export const RegisterFormSchema = z.object({
 export type RegisterFormState =
   | {
       errors?: {
+        name?: string[];
         email?: string[];
         password?: string[];
       };
