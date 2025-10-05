@@ -6,8 +6,11 @@ import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 
 export async function loginWithGoogle(): Promise<LoginFormState> {
-  const origin = (await headers()).get("origin");
   const client = await createClient();
+
+  const origin = (await headers()).get("origin") || "";
+  console.log(origin);
+
   const {
     error,
     data: { url },
