@@ -25,7 +25,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased [&_a]:hover:text-primary [&_a]:underline [&_a]:underline-offset-4`}
       >
         {children}
       </body>
