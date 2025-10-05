@@ -2,11 +2,14 @@
 
 import logout from "@/actions/auth/logout";
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
-import { useTransition } from "react";
+import { MouseEventHandler, useTransition } from "react";
 
 export function AppSidebarLogout() {
   const [pending, startTransition] = useTransition();
-  const action = () => startTransition(() => logout());
+  const action: MouseEventHandler = (event) => {
+    event.preventDefault();
+    startTransition(() => logout());
+  };
 
   return (
     <DropdownMenuItem onClick={action}>
