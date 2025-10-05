@@ -8,8 +8,9 @@ import { headers } from "next/headers";
 export async function loginWithGoogle(): Promise<LoginFormState> {
   const client = await createClient();
 
-  const origin = (await headers()).get("origin") || "";
-  console.log(origin);
+  const origin = process.env.VERCEL_URL
+    ? `https://${process.env.VERCEL_URL}`
+    : (await headers()).get("origin") || "";
 
   const {
     error,
